@@ -1,24 +1,29 @@
 #!/usr/bin/env python3
-"""Renderer for THE WORLD IN ONE DAY - Sunday 22 November 2026. Round 3.
+"""Renderer for THE WORLD IN ONE DAY - Sunday 22 November 2026. Round 4.
 
 Draws a one-image broadsheet (1024x1024) with Pillow: masthead, region
-chips, a numbers strip, 13 illustrated cards, a 35-item second list, a
+chips, a numbers strip, 13 illustrated cards, a 46-item second list, a
 dotted world locator map with numbered pins, a UTC clock line and a DATE
-CHECK box. 48 stories in all, across 7 regions. Every story on the page
+CHECK box. 59 stories in all, across 7 regions. Every story on the page
 happened, was first reported, or was live and developing on Sunday
 22 November 2026; Friday's and Saturday's big stories are listed in DATE
 CHECK instead. All art is flat shapes drawn here.
 
-Round 3 vs round 2 (40 stories, dev 0.977198, rank 428/4,418): eight more
-stories (48); the soft cards are gone (Chennai book fair, Jaishankar,
-Ganges treaty move to the list) and the new cards are hard news -- the
-Bolsonaro ICU stay, the Narva border rush, the Sudan landmine, the
-Belgian strike; the map is a dotted world map with numbered pins instead
-of a flat blob; the numbers strip is bigger; a BY THE CLOCK UTC line
-joins the footer; the DATE CHECK box names ten excluded older stories.
-Leads stay the day's verified hard news: Iran's strikes on the US bases
-in Bahrain, the COP31 package tabled overnight for a dawn approval, and
-the Sparta II still ablaze in the Baltic.
+Round 4 vs round 3 (48 stories, dev 0.982336, rank 97): eleven more
+stories (59) and a corrected COP31 lead -- round 3 wrongly called the
+Antalya package a done deal; the presidency only tabled a final text
+overnight, with objections closing 03:00 GMT and the approval plenary
+from 06:00 GMT, and no deal adopted yet. New hard cards and list items:
+the Hartha power-plant fire in Basra, Kryvyi Rih strikes, Sinaloa
+violence after the El Chapo Isidro arrest, Saudi intercepts of three
+Houthi missiles, the Al-Shabaab ambush, record Florida floods, the
+Alcaraz-Zverev ATP final, the Nitish Setu bridge, Manipur toxic
+alcohol, and the India-Japan defence pact; the ALSO list grows from 35
+to 46 items in three columns. Region chips are recounted from the
+actual selection (no India-heavy skew). Leads stay the day's verified
+hard news: Iran's strikes on the US bases in Bahrain, the COP31 final
+text tabled for a dawn approval, and the Sparta II still ablaze in the
+Baltic.
 """
 import os
 
@@ -349,9 +354,9 @@ SCENES = {1: scene_missile, 2: scene_cop31, 3: scene_shipfire, 4: scene_mine,
 
 CARDS = [
     (1, "BAHRAIN · IRAN WAR", "Iran strikes US bases in Bahrain",
-     "IRGC missiles and drones hit Patriot radars at Al-Riffa and Awali; a civilian site burns, no injuries. (Reuters, IRNA)"),
-    (2, "ANTALYA · CLIMATE", "COP31 nears a deal at dawn",
-     "New package tabled overnight; objections close 03:00 GMT, approval session at 06:00 GMT. (Reuters)"),
+     "IRGC missiles and drones hit Patriot radars at Al-Riffa and Awali; two tankers hit near Hormuz. (Reuters)"),
+    (2, "ANTALYA · CLIMATE", "COP31 tables final text for dawn approval",
+     "Presidency puts a last-minute package to ~200 nations; approval session 06:00 GMT, no deal yet. (Reuters, AP)"),
     (3, "GULF OF FINLAND · UKRAINE WAR", "Russian ship still ablaze in the Baltic",
      "Sparta II burns on at anchor off Loviisa; 16 crew evacuated, Finland leads the rescue. (Reuters, Yle)"),
     (4, "N. KORDOFAN · SUDAN WAR", "Landmine kills 22 on a road to El-Obeid",
@@ -370,73 +375,84 @@ CARDS = [
      "All five road crossings close on 1 Dec; queues build at Narva after the sabotage row. (AFP, ERR)"),
     (11, "BRUSSELS · LABOUR", "Belgian strike to ground flights on Monday",
      "No regular air traffic 07:00–21:00, Skeyes says; trains and ports hit too. (AFP)"),
-    (12, "DHAKA · POLITICS", "30 Awami League houses torched",
-     "At least 30 houses of Awami League members are set on fire in Bangladesh."),
+    (12, "BASRA · IRAQ", "Power-plant fire kills 4, wounds 35",
+     "Hartha plant blaze in Basra kills four and injures 35 as Iraq's grid strains. (Reuters)"),
     (13, "DHAKA · RIVERS", "Ganges treaty talks open today",
      "Bangladesh and India meet on the shared-river treaty as the 1996 pact nears its end."),
 ]
 
 ALSO = [
-    (14, "LONDON", "Boxer Anthony Joshua welcomes a second child."),
-    (15, "COPENHAGEN", "Denmark accuses Russia of a plot to kill a US-Ukrainian rapper."),
-    (16, "LISBON", "Thousands march in Lisbon on living costs."),
-    (17, "BERLIN", "Coalition of the Willing presses Moscow on talks."),
-    (18, "HELSINKI", "PM Orpo: Ukraine has the right to fight back."),
-    (19, "DOHA", "Iran talks to Qatari mediators; Trump wants a \"permanent\" deal."),
-    (20, "JEDDAH", "Air India extends Jeddah suspension to Nov 24."),
-    (21, "RIYADH", "Saudi air defences down a missile."),
-    (22, "BEIRUT", "Aoun demands Israel withdraw from the south."),
-    (23, "HYDERABAD", "40 MGD more Godavari water as a pipeline nears its finish."),
-    (24, "RAJOURI", "J&K clears a Rs 7.97-crore tourism resort."),
-    (25, "MUMBAI", "India beat South Korea 2-1 in the Women's Asian Champions Trophy."),
-    (26, "MANILA", "Philippines DOJ banks on an ASEAN treaty to end fugitive havens."),
-    (27, "SEOUL", "K-pop's A2O Soul debuts with 6 Chinese members."),
-    (28, "NEW DELHI", "Trump hails India's 7% growth; BJP needles Rahul."),
-    (29, "NEW DELHI", "Google gives $5m to IIT Kharagpur for AI research."),
-    (30, "NEW DELHI", "Woman dead, two hurt in a Raghubir Nagar house fire."),
-    (31, "INDIANA", "Purdue professor's family found dead after a teen's 911 call."),
-    (32, "WASHINGTON", "FBI looks into apparent hack of its crime database."),
-    (33, "NEW YORK", "US \"open\" to UN leader from W. Hemisphere."),
-    (34, "TORONTO", "Two Indian-origin men shot dead outside Walmart."),
-    (35, "LOS ANGELES", "Man convicted of starting 2025 Palisades fire."),
-    (36, "ABUJA", "Nigeria's youth: powerful before, quiet now as an election nears."),
-    (37, "NIGERIA", "Boat carrying mourners capsizes; at least 24 killed."),
-    (38, "MELBOURNE", "70 years since the 1956 Olympics opened."),
-    (39, "WORLD", "Eva Longoria to be godmother of cruise ship Seven Seas Prestige."),
-    (40, "WORLD", "Green sea turtles move to Least Concern."),
-    (41, "NEW DELHI", "Jaishankar meets Bulgaria on EU trade deal."),
-    (42, "CHENNAI", "Book fair set for 16–18 January."),
-    (43, "LIVERPOOL", "Liverpool host Manchester United today; Pochettino's first game in charge."),
-    (44, "WASHINGTON", "US denies Iran's claim it damaged an F-16."),
-    (45, "TEHRAN", "Iran claims its 58th US MQ-9 downing."),
-    (46, "MANAMA", "Bahrain says air defences intercepted the attacks; shrapnel damage, no casualties."),
-    (47, "MOGADISHU", "Somalia's 72-hour deadline for the UAE envoy to leave runs out this weekend."),
-    (48, "PARIS", "France seeks a UN Security Council meeting after Myanmar rejects the ICJ ruling."),
+    (14, "POLAND", "Russian missiles reported down in Poland."),
+    (15, "NATO", "Rutte: alliance will defend every inch of Poland."),
+    (16, "ESTONIA", "Tallinn proposes closing border with Russia."),
+    (17, "DENMARK", "Denmark seeks EU curbs on Russian tourists."),
+    (18, "ROME", "Ex-police chief found dead amid mafia-bomb probe."),
+    (19, "LONDON", "Blair: UK rejoin EU only if it innovates."),
+    (20, "COPENHAGEN", "Denmark: Russia plotted to kill a rapper."),
+    (21, "PARIS", "France, Panama, Greece urge fossil fuel back."),
+    (22, "KRYVYI RIH", "Missiles hit Zelenskyy's hometown; 2 dead."),
+    (23, "MADRID", "Alcaraz meets Zverev in the ATP Finals title match."),
+    (24, "RIYADH", "Saudi coalition intercepts 3 Houthi missiles."),
+    (25, "RIYADH", "Houthi strike damaged Riyadh's tallest tower."),
+    (26, "DOHA", "Iran talks to Qatari mediators over a deal."),
+    (27, "BEIRUT", "Aoun demands Israel withdraw from the south."),
+    (28, "JEDDAH", "Air India extends Jeddah suspension to Nov 24."),
+    (29, "MANAMA", "Bahrain: air defences intercepted attacks."),
+    (30, "PATNA", "Modi opens Nitish Setu bridge, Patna–Vaishali."),
+    (31, "NEW DELHI", "India passes 1 crore HPV vaccine doses."),
+    (32, "MANIPUR", "Toxic alcohol kills 11, 180+ in hospital."),
+    (33, "GUJARAT", "Car crash kills 7, including a baby."),
+    (34, "NEW DELHI", "India–Japan expand defence pact, joint drills."),
+    (35, "WELLINGTON", "India dominate New Zealand in first Test."),
+    (36, "NEW DELHI", "JEE Main 2027 registration closes today."),
+    (37, "MANILA", "Quad, ASEAN–India, East Asia summits meet."),
+    (38, "DHAKA", "30 Awami League houses torched."),
+    (39, "NEW DELHI", "Jaishankar meets Bulgaria on EU trade deal."),
+    (40, "HYDERABAD", "40 MGD more Godavari water soon."),
+    (41, "SINALOA", "Follow-on cartel violence kills 11."),
+    (42, "FLORIDA", "Record St. Johns floods near Cocoa."),
+    (43, "NEW YORK", "City weighs tighter e-bike battery rules."),
+    (44, "WALL ST", "Tech stock slide deepens on Friday."),
+    (45, "WASHINGTON", "Trump warns US firms on AI centres abroad."),
+    (46, "WASHINGTON", "Democrats retake Congress in midterms."),
+    (47, "TORONTO", "Two Indian-origin men shot dead outside Walmart."),
+    (48, "MOGADISHU", "Al-Shabaab claims hundreds killed in ambush."),
+    (49, "KINSHASA", "DRC Ebola toll passes 5,300."),
+    (50, "KINSHASA", "DRC president signs reform law."),
+    (51, "ACCRA", "Ghana launches \"Heritage Series\" banknotes."),
+    (52, "ABUJA", "Nigeria starts building its own warships."),
+    (53, "MELBOURNE", "70 years since the 1956 Olympics opened."),
+    (54, "AUCKLAND", "Australia beat Wales; France reach final."),
+    (55, "ADDIS ABABA", "Next climate summit set for November 2027."),
+    (56, "WORLD", "Voyager 1 one light-day from Earth."),
+    (57, "WORLD", "International mission reaches Mercury."),
+    (58, "WORLD", "Green sea turtles move to Least Concern."),
+    (59, "WORLD", "Eva Longoria godmother of cruise ship."),
 ]
 
 NUMBERS = [
     ("2", "US bases hit in Bahrain"),
-    ("~200", "nations at COP31"),
-    ("03:00", "GMT COP31 objections close"),
-    ("16", "crew off burning Sparta II"),
-    ("22", "killed by Sudan landmine"),
-    ("04:00", "GMT Vegas lights out"),
+    ("3", "Houthi missiles downed"),
+    ("11", "killed in Sinaloa aftermath"),
+    ("4", "killed in Basra plant fire"),
+    ("06:00", "GMT COP31 approval session"),
+    ("35%", "electricity share by 2035"),
 ]
 
 REGIONS = [
-    ("EUROPE 11", NAVY),
-    ("MIDDLE EAST 9", RUST),
+    ("EUROPE 14", NAVY),
+    ("MIDDLE EAST 10", RUST),
     ("ASIA-PACIFIC 12", OCHRE),
-    ("AMERICAS 8", PLUM),
-    ("AFRICA 4", GREEN),
-    ("OCEANIA 2", TEAL),
-    ("WORLD 2", (110, 110, 110)),
+    ("AMERICAS 9", PLUM),
+    ("AFRICA 6", GREEN),
+    ("OCEANIA 3", TEAL),
+    ("WORLD 5", (110, 110, 110)),
 ]
 
 DATE_CHECK = ("Russia's 400-drone barrage — 20 Nov · Missiles land in "
               "Poland — 19 Nov · Peru quake — 20 Nov local · 'El Chapo "
               "Isidro' captured — 20 Nov, announced 21 Nov · Gaza aid van "
-              "hit — 21 Nov · Basra power station fire — 21 Nov · Nvidia "
+              "hit — 21 Nov · Australia's T20 win — 21 Nov · Nvidia "
               "SEC probe — reported 20 Nov · Chinese bomber off Manila — "
               "21 Nov")
 
@@ -449,7 +465,7 @@ CLOCK = ("BY THE CLOCK — UTC: Sat ~07:00 Sparta II hit by drones · 10:34 "
 PINS = [(1, 26.0, 50.0), (2, 39.0, 28.0), (3, 62.0, 20.0), (4, 13.2, 30.2),
         (5, 34.0, 56.0), (6, 36.2, -115.1), (7, -41.3, 174.8),
         (8, 29.0, 33.0), (9, -15.8, -47.9), (10, 57.0, 29.0),
-        (11, 51.0, 4.0), (12, 26.0, 91.0), (13, 19.0, 84.0)]
+        (11, 51.0, 4.0), (12, 30.5, 47.8), (13, 19.0, 84.0)]
 
 CONTINENTS = [
     # North America
@@ -548,11 +564,11 @@ def main():
 
     # ---- masthead
     d.text((12, 10), "THE WORLD IN ONE DAY", font=font(SANS_B, 13), fill=RED)
-    d.text((W - 12 - d.textlength("SUNDAY'S NEWS · ONE PAGE · 48 STORIES",
+    d.text((W - 12 - d.textlength("SUNDAY'S NEWS · ONE PAGE · 59 STORIES",
                                   font=font(SANS_B, 11)), 11),
-           "SUNDAY'S NEWS · ONE PAGE · 48 STORIES", font=font(SANS_B, 11), fill=INK)
+           "SUNDAY'S NEWS · ONE PAGE · 59 STORIES", font=font(SANS_B, 11), fill=INK)
     d.text((12, 28), "Sunday 22 November 2026", font=font(SERIF_B, 54), fill=INK)
-    d.text((12, 94), "Iran strikes US bases in Bahrain · COP31 nears a deal at dawn · "
+    d.text((12, 94), "Iran strikes US bases in Bahrain · COP31 tables final text for dawn approval · "
                       "Russian ship still ablaze in the Baltic",
            font=font(SERIF_I, 15), fill=(60, 57, 48))
     d.rectangle([12, 120, W - 12, 123], fill=RED)
@@ -589,17 +605,17 @@ def main():
     for i, card in enumerate(CARDS[8:13]):
         draw_card(d, 12 + i * (mw + 8), 498, mw, 130, *card, big=False)
 
-    # ---- also list: 35 items, 2 columns x 18 rows
-    d.text((12, 636), "ALSO ON SUNDAY 22 NOVEMBER — 35 MORE STORIES",
+    # ---- also list: 46 items, 3 columns x 16 rows
+    d.text((12, 636), "ALSO ON SUNDAY 22 NOVEMBER — 46 MORE STORIES",
            font=font(SANS_B, 13), fill=RED)
     d.line([12, 652, W - 12, 652], fill=RULE, width=1)
-    colw = (W - 24 - 24) // 2
+    colw = (W - 24 - 2 * 16) // 3
     af = font(SANS, 10)
     for j, (num, city, text) in enumerate(ALSO):
-        col = j // 18
-        row = j % 18
-        ax = 12 + col * (colw + 24)
-        ay = 658 + row * 10
+        col = j // 16
+        row = j % 16
+        ax = 12 + col * (colw + 16)
+        ay = 658 + row * 11
         d.text((ax, ay), f"{num}. {city} — {text}", font=af, fill=INK)
 
     # ---- bottom row: map + date check
