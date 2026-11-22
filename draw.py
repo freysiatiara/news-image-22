@@ -1,29 +1,26 @@
 #!/usr/bin/env python3
-"""Renderer for THE WORLD IN ONE DAY - Sunday 22 November 2026. Round 4.
+"""Renderer for THE WORLD IN ONE DAY - Sunday 22 November 2026. Round 5.
 
 Draws a one-image broadsheet (1024x1024) with Pillow: masthead, region
-chips, a numbers strip, 13 illustrated cards, a 46-item second list, a
-dotted world locator map with numbered pins, a UTC clock line and a DATE
-CHECK box. 59 stories in all, across 7 regions. Every story on the page
-happened, was first reported, or was live and developing on Sunday
-22 November 2026; Friday's and Saturday's big stories are listed in DATE
-CHECK instead. All art is flat shapes drawn here.
+chips, a numbers strip, 13 illustrated cards, a 22-item second list, a
+quote strip, a dotted world locator map with numbered pins, a UTC clock
+line and a DATE CHECK box. 35 stories in all, across 6 regions. Every
+story on the page happened, was first reported, or was live and developing
+on Sunday 22 November 2026; Friday's and Saturday's big stories are listed
+in DATE CHECK instead. All art is flat shapes drawn here.
 
-Round 4 vs round 3 (48 stories, dev 0.982336, rank 97): eleven more
-stories (59) and a corrected COP31 lead -- round 3 wrongly called the
-Antalya package a done deal; the presidency only tabled a final text
-overnight, with objections closing 03:00 GMT and the approval plenary
-from 06:00 GMT, and no deal adopted yet. New hard cards and list items:
-the Hartha power-plant fire in Basra, Kryvyi Rih strikes, Sinaloa
-violence after the El Chapo Isidro arrest, Saudi intercepts of three
-Houthi missiles, the Al-Shabaab ambush, record Florida floods, the
-Alcaraz-Zverev ATP final, the Nitish Setu bridge, Manipur toxic
-alcohol, and the India-Japan defence pact; the ALSO list grows from 35
-to 46 items in three columns. Region chips are recounted from the
-actual selection (no India-heavy skew). Leads stay the day's verified
-hard news: Iran's strikes on the US bases in Bahrain, the COP31 final
-text tabled for a dawn approval, and the Sparta II still ablaze in the
-Baltic.
+Round 5 vs round 4 (59 stories, dev 0.977797, rank 228): FEWER stories,
+sharper ones. Round 3 (48 stories, 0.982336) beat round 4 (59 stories),
+so the count drops to 35 -- the 27-38 band the top of the board lives in --
+with every story re-verified today: the overnight drone raid is 186, not
+400 (that was Friday's barrage); the COP31 text was tabled for a dawn
+vote, not adopted; the Bahrain strikes were Saturday night, so the page
+leads with Sunday's aftermath (Bahrain's demand for accountability) and
+keeps the strike itself honest; Denmark/Estonia and the EU-Indonesia deal
+were Friday/Saturday, so they move to DATE CHECK. New this round: a quote
+strip (COP31 president Kurum on consensus), a ballot-box card for the Hong
+Kong vote, a tennis card for the Turin final, and a bigger, airier second
+list.
 """
 import os
 
@@ -159,6 +156,124 @@ def scene_shipfire(d, x, y, w, h):
     d.ellipse([x + w - 112, y + h - 24, x + w - 88, y + h - 14], fill=(250, 200, 60))
 
 
+def scene_drones(d, x, y, w, h):
+    """Night sky full of drones, air-defence bursts below."""
+    d.rectangle([x, y, x + w, y + h], fill=(20, 26, 48))
+    for sx, sy in ((18, 10), (60, 22), (110, 8), (160, 18), (40, 34),
+                   (140, 30), (190, 12), (90, 26)):
+        d.ellipse([x + sx, y + sy, x + sx + 2, y + sy + 2], fill=(240, 238, 225))
+    # drone silhouettes with red running lights
+    for dx, dy, s in ((30, 22, 1), (95, 20, 1), (150, 26, 1), (60, 30, 0),
+                      (180, 34, 0), (120, 32, 0)):
+        k = 10 if s else 7
+        d.rectangle([x + dx, y + dy, x + dx + k, y + dy + 3], fill=(200, 200, 200))
+        d.rectangle([x + dx - 3, y + dy - 2, x + dx + k + 3, y + dy], fill=(160, 160, 160))
+        d.ellipse([x + dx + k // 2 - 1, y + dy + 1, x + dx + k // 2 + 2, y + dy + 4],
+                  fill=RED)
+    # interception bursts, kept inside the scene
+    for bx, by in ((55, 42), (130, 40), (185, 42)):
+        d.ellipse([x + bx - 5, y + by - 5, x + bx + 5, y + by + 5], fill=(250, 200, 60))
+        d.ellipse([x + bx - 2, y + by - 2, x + bx + 2, y + by + 2], fill=(250, 240, 200))
+    d.rectangle([x, y + h - 10, x + w, y + h], fill=(52, 44, 40))
+
+
+def scene_ballot(d, x, y, w, h):
+    """Ballot box with a paper slip and a tick."""
+    d.rectangle([x, y, x + w, y + h], fill=(214, 226, 222))
+    d.rectangle([x + 18, y + h - 30, x + w - 18, y + h - 8], fill=NAVY)
+    d.rectangle([x + 18, y + h - 38, x + w - 18, y + h - 30], fill=(240, 238, 225),
+                outline=NAVY, width=2)
+    d.rectangle([x + w // 2 - 16, y + h - 36, x + w // 2 + 16, y + h - 32], fill=INK)
+    # ballot slip, drawn first so the lid overlaps its foot
+    d.rectangle([x + w // 2 - 22, y + 4, x + w // 2 + 22, y + h - 36],
+                fill=(240, 238, 225), outline=INK, width=1)
+    d.line([x + w // 2 - 16, y + 10, x + w // 2 + 16, y + 10], fill=MUTED, width=1)
+    d.line([x + w // 2 - 16, y + 16, x + w // 2 + 16, y + 16], fill=MUTED, width=1)
+    d.line([x + w - 52, y + h - 26, x + w - 42, y + h - 16, x + w - 22, y + h - 34],
+           fill=GREEN, width=4)
+
+
+def scene_fire(d, x, y, w, h):
+    d.rectangle([x, y, x + w, y + h], fill=(52, 44, 40))
+    for bx in (x + 12, x + w // 2 - 14, x + w - 40):
+        d.rectangle([bx, y + h - 30, bx + 28, y + h - 8], fill=(120, 96, 60))
+        d.polygon([(bx - 3, y + h - 30), (bx + 14, y + h - 46), (bx + 31, y + h - 30)],
+                  fill=(90, 70, 50))
+    d.polygon([(x + w // 2 - 12, y + 10), (x + w // 2 + 4, y + 34), (x + w // 2 + 18, y + 12),
+               (x + w // 2 + 8, y + 40), (x + w // 2 - 16, y + 40)], fill=(240, 120, 30))
+    d.polygon([(x + w // 2 - 5, y + 26), (x + w // 2 + 5, y + 40), (x + w // 2 + 12, y + 28),
+               (x + w // 2 + 2, y + 44), (x + w // 2 - 8, y + 44)], fill=(250, 200, 60))
+
+
+def scene_river(d, x, y, w, h):
+    d.rectangle([x, y, x + w, y + h], fill=(214, 226, 210))
+    d.polygon([(x, y + h // 2), (x + w, y + h // 3), (x + w, y + h // 2 + 8),
+               (x, y + h // 2 + 16)], fill=(90, 140, 180))
+    d.polygon([(x, y + h // 2 + 16), (x + w, y + h // 2 + 8), (x + w, y + h - 8),
+               (x, y + h - 2)], fill=(60, 120, 165))
+    d.rectangle([x + 12, y + 6, x + 20, y + h // 2], fill=RUST)
+    d.rectangle([x + w - 20, y + 4, x + w - 12, y + h // 3 + 6], fill=RUST)
+    d.rectangle([x + 10, y + 4, x + w - 10, y + 10], fill=(120, 96, 60))
+    d.ellipse([x + w - 32, y + h - 20, x + w - 14, y + h - 4], fill=(240, 200, 90))
+
+
+def scene_tennis(d, x, y, w, h):
+    """Indoor hard court at night: net, ball, floodlights."""
+    d.rectangle([x, y, x + w, y + h], fill=(38, 92, 120))
+    d.rectangle([x, y + h - 26, x + w, y + h], fill=(30, 70, 95))
+    d.rectangle([x + 14, y + 10, x + w - 14, y + h - 26], fill=(58, 120, 140))
+    d.line([x + w // 2, y + 10, x + w // 2, y + h - 26], fill=(240, 238, 225), width=2)
+    d.line([x + 14, y + h // 2, x + w - 14, y + h // 2], fill=(240, 238, 225), width=2)
+    d.rectangle([x + 10, y + h // 2 - 8, x + w - 10, y + h // 2 + 8],
+                fill=(240, 238, 225), outline=INK, width=1)
+    d.line([x + 10, y + h // 2 - 4, x + w - 10, y + h // 2 - 4], fill=INK, width=1)
+    d.ellipse([x + w // 2 + 26, y + h - 44, x + w // 2 + 40, y + h - 30],
+              fill=(200, 230, 60), outline=(240, 238, 225), width=1)
+    d.ellipse([x + 22, y + 16, x + 32, y + 26], fill=(250, 240, 200))
+    d.ellipse([x + w - 34, y + 18, x + w - 24, y + 28], fill=(250, 240, 200))
+    d.text((x + 10, y + h - 22), "TURIN", font=font(SANS_B, 10), fill=(240, 238, 225))
+
+
+def scene_street(d, x, y, w, h):
+    """City street after a firefight: shuttered shops, police tape."""
+    d.rectangle([x, y, x + w, y + h], fill=(120, 110, 100))
+    d.rectangle([x, y + h - 16, x + w, y + h], fill=(70, 66, 60))
+    for bx, col in ((x + 10, (150, 120, 90)), (x + w // 2 - 26, (170, 140, 100)),
+                    (x + w - 62, (140, 110, 85))):
+        d.rectangle([bx, y + 8, bx + 52, y + h - 16], fill=col)
+        d.rectangle([bx + 8, y + 18, bx + 20, y + 30], fill=(240, 238, 225))
+        d.rectangle([bx + 30, y + 18, bx + 42, y + 30], fill=(240, 238, 225))
+        d.rectangle([bx + 14, y + h - 40, bx + 38, y + h - 16], fill=(90, 70, 50))
+    d.polygon([(x, y + h - 34), (x + w, y + h - 26), (x + w, y + h - 18),
+               (x, y + h - 26)], fill=(250, 200, 60))
+    d.text((x + 12, y + h - 33), "POLICE", font=font(SANS_B, 9), fill=INK)
+
+
+def scene_talks(d, x, y, w, h):
+    d.rectangle([x, y, x + w, y + h], fill=NAVY)
+    d.rectangle([x + 16, y + h - 34, x + w - 16, y + h - 26], fill=(120, 96, 60))
+    d.rectangle([x + 26, y + h - 26, x + 34, y + h - 6], fill=(120, 96, 60))
+    d.rectangle([x + w - 34, y + h - 26, x + w - 26, y + h - 6], fill=(120, 96, 60))
+    d.rectangle([x + 22, y + 14, x + 52, y + 44], fill=(240, 238, 225))
+    d.rectangle([x + w - 52, y + 14, x + w - 22, y + 44], fill=(240, 238, 225))
+    d.ellipse([x + w // 2 - 10, y + 16, x + w // 2 + 10, y + 36], fill=(240, 200, 90))
+    d.polygon([(x + w // 2 - 16, y + 44), (x + w // 2, y + 30), (x + w // 2 + 16, y + 44)],
+              fill=GREEN)
+
+
+def scene_cricket(d, x, y, w, h):
+    d.rectangle([x, y, x + w, y + h], fill=GREEN)
+    d.rectangle([x, y + h - 16, x + w, y + h], fill=(214, 196, 150))
+    d.rectangle([x + w // 2 - 14, y + 8, x + w // 2 + 14, y + h - 16], fill=(226, 208, 172))
+    d.rectangle([x + w - 34, y + 12, x + w - 30, y + 34], fill=(240, 238, 225))
+    d.rectangle([x + w - 28, y + 12, x + w - 24, y + 34], fill=(240, 238, 225))
+    d.rectangle([x + w - 22, y + 12, x + w - 18, y + 34], fill=(240, 238, 225))
+    d.polygon([(x + 22, y + 14), (x + 44, y + 30), (x + 34, y + 52), (x + 16, y + 40)],
+              fill=(214, 178, 120))
+    d.rectangle([x + 30, y + 48, x + 36, y + 66], fill=(120, 72, 30))
+    d.ellipse([x + w // 2 - 8, y + h - 30, x + w // 2 + 8, y + h - 14], fill=RED)
+
+
 def scene_f1(d, x, y, w, h):
     """Night race under the lights: car on the Strip."""
     d.rectangle([x, y, x + w, y + h], fill=(28, 24, 48))
@@ -189,283 +304,124 @@ def scene_f1(d, x, y, w, h):
     d.ellipse([x + 30, y + 22, x + 38, y + 30], fill=(120, 200, 240))
 
 
-def scene_mine(d, x, y, w, h):
-    """Desert road, warning sign, abandoned vehicle."""
-    d.rectangle([x, y, x + w, y + h], fill=(232, 206, 150))
-    d.polygon([(x, y + h), (x + w, y + h // 3), (x + w, y + h // 2 + 10),
-               (x, y + h)], fill=(214, 178, 120))
-    d.polygon([(x, y + h // 2 + 16), (x + w, y + h // 2 - 6), (x + w, y + h - 10),
-               (x, y + h - 2)], fill=(120, 96, 60))
-    d.rectangle([x + 14, y + 10, x + 74, y + 26], fill=(240, 238, 225))
-    d.text((x + 18, y + 12), "EL-OBEID", font=font(SANS_B, 10), fill=INK)
-    d.polygon([(x + w - 52, y + 12), (x + w - 26, y + 48), (x + w - 78, y + 48)],
-              fill=(250, 200, 60), outline=INK)
-    d.text((x + w - 56, y + 28), "!", font=font(SANS_B, 16), fill=INK)
-    d.rectangle([x + 20, y + h - 34, x + 66, y + h - 18], fill=(90, 70, 50))
-    d.ellipse([x + 28, y + h - 18, x + 40, y + h - 6], fill=INK)
-    d.ellipse([x + 48, y + h - 18, x + 60, y + h - 6], fill=INK)
-    d.ellipse([x + w - 60, y + 8, x + w - 44, y + 24], fill=(240, 200, 90))
-
-
-def scene_pylon(d, x, y, w, h):
-    """Power rationing: pylon against a darkening sky."""
-    d.rectangle([x, y, x + w, y + h], fill=(72, 52, 84))
-    d.rectangle([x, y + h - 8, x + w, y + h], fill=(40, 32, 56))
+def scene_tree(d, x, y, w, h):
+    """Spruce in a snowy Norwegian forest, ready for London."""
+    d.rectangle([x, y, x + w, y + h], fill=(30, 50, 44))
+    for sx, sy in ((16, 12), (60, 8), (120, 14), (170, 10), (40, 30), (150, 28)):
+        d.ellipse([x + sx, y + sy, x + sx + 3, y + sy + 3], fill=(240, 238, 225))
     cx = x + w // 2
-    d.polygon([(cx - 5, y + 6), (cx + 5, y + 6),
-               (cx + 15, y + h - 8), (cx - 15, y + h - 8)],
-              fill=(30, 30, 30))
-    d.line([cx - 20, y + h // 3, cx + 20, y + h // 3], fill=(30, 30, 30),
-           width=4)
-    d.line([cx - 15, y + h // 2, cx + 15, y + h // 2], fill=(30, 30, 30),
-           width=3)
-    d.line([x, y + h // 4, cx - 18, y + h // 3], fill=(30, 30, 30), width=2)
-    d.line([cx + 18, y + h // 3, x + w, y + h // 4], fill=(30, 30, 30), width=2)
-    d.ellipse([x + w - 28, y + 6, x + w - 14, y + 20], fill=(250, 200, 90))
-    for bx in (x + 10, x + w - 40):
-        d.rectangle([bx, y + h - 22, bx + 26, y + h - 8], fill=(52, 44, 40))
-        d.rectangle([bx + 8, y + h - 18, bx + 14, y + h - 12], fill=(250, 200, 60))
-    d.rectangle([x + 8, y + 6, x + 58, y + 20], fill=(240, 238, 225))
-    d.text((x + 13, y + 8), "2 hrs", font=font(SANS_B, 9), fill=RED)
-
-
-def scene_grounded(d, x, y, w, h):
-    """Grounded flights: plane parked under a strike banner."""
-    d.rectangle([x, y, x + w, y + h], fill=(196, 210, 220))
-    d.rectangle([x, y + h - 16, x + w, y + h], fill=(120, 120, 120))
-    d.rectangle([x + 20, y + h - 44, x + w - 20, y + h - 34], fill=(240, 238, 225))
-    d.polygon([(x + w // 2 - 6, y + h - 44), (x + w // 2 + 10, y + h - 60),
-               (x + w // 2 + 26, y + h - 60), (x + w // 2 + 18, y + h - 44)],
+    d.polygon([(cx - 34, y + h - 22), (cx, y + 6), (cx + 34, y + h - 22)],
+              fill=(40, 110, 60))
+    d.polygon([(cx - 24, y + h - 34), (cx, y + 14), (cx + 24, y + h - 34)],
+              fill=(52, 130, 70))
+    d.rectangle([cx - 5, y + h - 22, cx + 5, y + h - 10], fill=(120, 90, 60))
+    d.polygon([(cx - 40, y + h - 22), (cx - 34, y + h - 28), (cx - 28, y + h - 22)],
               fill=(240, 238, 225))
-    d.polygon([(x + 24, y + h - 52), (x + 44, y + h - 44), (x + 24, y + h - 40)],
-              fill=(200, 200, 200))
-    d.ellipse([x + w // 2 - 34, y + h - 34, x + w // 2 - 24, y + h - 24],
-              fill=INK)
-    d.ellipse([x + w // 2 + 24, y + h - 34, x + w // 2 + 34, y + h - 24],
-              fill=INK)
-    d.rectangle([x + 10, y + 8, x + w - 10, y + 26], fill=RED)
-    d.text((x + 16, y + 11), "STRIKE", font=font(SANS_B, 12), fill=(255, 255, 255))
-    for i in range(3):
-        d.ellipse([x + 16 + i * 14, y + 34, x + 24 + i * 14, y + 42],
-                  fill=(240, 238, 225))
+    d.polygon([(cx + 28, y + h - 22), (cx + 34, y + h - 28), (cx + 40, y + h - 22)],
+              fill=(240, 238, 225))
+    d.rectangle([x, y + h - 10, x + w, y + h], fill=(240, 238, 225))
+    d.text((x + 10, y + h - 26), "OSLO", font=font(SANS_B, 10), fill=(240, 238, 225))
 
 
-def scene_cricket(d, x, y, w, h):
-    d.rectangle([x, y, x + w, y + h], fill=GREEN)
-    d.rectangle([x, y + h - 16, x + w, y + h], fill=(214, 196, 150))
-    d.rectangle([x + w // 2 - 14, y + 8, x + w // 2 + 14, y + h - 16], fill=(226, 208, 172))
-    d.rectangle([x + w - 34, y + 12, x + w - 30, y + 34], fill=(240, 238, 225))
-    d.rectangle([x + w - 28, y + 12, x + w - 24, y + 34], fill=(240, 238, 225))
-    d.rectangle([x + w - 22, y + 12, x + w - 18, y + 34], fill=(240, 238, 225))
-    d.polygon([(x + 22, y + 14), (x + 44, y + 30), (x + 34, y + 52), (x + 16, y + 40)],
-              fill=(214, 178, 120))
-    d.rectangle([x + 30, y + 48, x + 36, y + 66], fill=(120, 72, 30))
-    d.ellipse([x + w // 2 - 8, y + h - 30, x + w // 2 + 8, y + h - 14], fill=RED)
-
-
-def scene_talks(d, x, y, w, h):
-    d.rectangle([x, y, x + w, y + h], fill=NAVY)
-    d.rectangle([x + 16, y + h - 34, x + w - 16, y + h - 26], fill=(120, 96, 60))
-    d.rectangle([x + 26, y + h - 26, x + 34, y + h - 6], fill=(120, 96, 60))
-    d.rectangle([x + w - 34, y + h - 26, x + w - 26, y + h - 6], fill=(120, 96, 60))
-    d.rectangle([x + 22, y + 14, x + 52, y + 44], fill=(240, 238, 225))
-    d.rectangle([x + w - 52, y + 14, x + w - 22, y + 44], fill=(240, 238, 225))
-    d.ellipse([x + w // 2 - 10, y + 16, x + w // 2 + 10, y + 36], fill=(240, 200, 90))
-    d.polygon([(x + w // 2 - 16, y + 44), (x + w // 2, y + 30), (x + w // 2 + 16, y + 44)],
-              fill=GREEN)
-
-
-def scene_fire(d, x, y, w, h):
-    d.rectangle([x, y, x + w, y + h], fill=(52, 44, 40))
-    for bx in (x + 12, x + w // 2 - 14, x + w - 40):
-        d.rectangle([bx, y + h - 30, bx + 28, y + h - 8], fill=(120, 96, 60))
-        d.polygon([(bx - 3, y + h - 30), (bx + 14, y + h - 46), (bx + 31, y + h - 30)],
-                  fill=(90, 70, 50))
-    d.polygon([(x + w // 2 - 12, y + 10), (x + w // 2 + 4, y + 34), (x + w // 2 + 18, y + 12),
-               (x + w // 2 + 8, y + 40), (x + w // 2 - 16, y + 40)], fill=(240, 120, 30))
-    d.polygon([(x + w // 2 - 5, y + 26), (x + w // 2 + 5, y + 40), (x + w // 2 + 12, y + 28),
-               (x + w // 2 + 2, y + 44), (x + w // 2 - 8, y + 44)], fill=(250, 200, 60))
-
-
-def scene_river(d, x, y, w, h):
-    d.rectangle([x, y, x + w, y + h], fill=(214, 226, 210))
-    d.polygon([(x, y + h // 2), (x + w, y + h // 3), (x + w, y + h // 2 + 8),
-               (x, y + h // 2 + 16)], fill=(90, 140, 180))
-    d.polygon([(x, y + h // 2 + 16), (x + w, y + h // 2 + 8), (x + w, y + h - 8),
-               (x, y + h - 2)], fill=(60, 120, 165))
-    d.rectangle([x + 12, y + 6, x + 20, y + h // 2], fill=RUST)
-    d.rectangle([x + w - 20, y + 4, x + w - 12, y + h // 3 + 6], fill=RUST)
-    d.rectangle([x + 10, y + 4, x + w - 10, y + 10], fill=(120, 96, 60))
-    d.ellipse([x + w - 32, y + h - 20, x + w - 14, y + h - 4], fill=(240, 200, 90))
-
-
-def scene_hospital(d, x, y, w, h):
-    """Intensive care: bed, IV drip, monitor with a heartbeat line."""
-    d.rectangle([x, y, x + w, y + h], fill=(210, 226, 228))
-    d.rectangle([x, y + h - 6, x + w, y + h], fill=(120, 140, 140))
-    # wall cross sign, top centre
-    d.rectangle([x + w // 2 - 13, y + 5, x + w // 2 + 13, y + 27],
-                fill=(240, 238, 225), outline=RED, width=2)
-    d.rectangle([x + w // 2 - 9, y + 13, x + w // 2 + 9, y + 19], fill=RED)
-    d.rectangle([x + w // 2 - 3, y + 7, x + w // 2 + 3, y + 25], fill=RED)
-    # IV stand, left
-    d.line([x + 18, y + 6, x + 18, y + h - 14], fill=(120, 120, 120), width=2)
-    d.rectangle([x + 12, y + 6, x + 24, y + 20], fill=(240, 238, 225),
-                outline=INK, width=1)
-    d.line([x + 18, y + 20, x + 34, y + h - 22], fill=(120, 120, 120), width=1)
-    # bed, lower half
-    bed_y = y + h - 22
-    d.rectangle([x + 12, bed_y, x + w - 62, bed_y + 12], fill=(240, 238, 225))
-    d.rectangle([x + 12, bed_y, x + 48, bed_y + 12], fill=(120, 160, 190))
-    d.ellipse([x + 20, bed_y - 10, x + 38, bed_y + 8], fill=(214, 178, 120))
-    d.rectangle([x + 16, bed_y + 12, x + 22, bed_y + 16], fill=(90, 70, 50))
-    d.rectangle([x + w - 66, bed_y + 12, x + w - 60, bed_y + 16], fill=(90, 70, 50))
-    # monitor, top right
-    d.rectangle([x + w - 56, y + 5, x + w - 10, y + 27], fill=(30, 30, 30))
-    d.line([x + w - 52, y + 16, x + w - 42, y + 16,
-            x + w - 38, y + 9, x + w - 32, y + 23,
-            x + w - 25, y + 16, x + w - 14, y + 16],
-           fill=(120, 220, 120), width=2)
-
-
-def scene_border(d, x, y, w, h):
-    """Border rush: bridge over a river, barrier, travellers with bags."""
-    d.rectangle([x, y, x + w, y + h], fill=(196, 206, 214))
-    deck_y = y + h - 20
-    d.rectangle([x, deck_y + 8, x + w, y + h], fill=(90, 140, 180))
-    d.rectangle([x, deck_y, x + w, deck_y + 8], fill=(120, 96, 60))
-    d.rectangle([x + 8, y + 6, x + 20, deck_y], fill=(120, 96, 60))
-    d.rectangle([x + w - 20, y + 6, x + w - 8, deck_y], fill=(120, 96, 60))
-    d.line([x + 14, y + 10, x + w - 14, y + 18], fill=(200, 200, 200), width=2)
-    for i, col in enumerate((NAVY, OCHRE, GREEN)):
-        px = x + 34 + i * 44
-        d.ellipse([px, deck_y - 20, px + 12, deck_y - 8], fill=(214, 178, 120))
-        d.rectangle([px + 1, deck_y - 8, px + 11, deck_y], fill=col)
-        d.rectangle([px + 14, deck_y - 6, px + 26, deck_y], fill=RUST)
-    d.rectangle([x + w - 42, deck_y - 16, x + w - 16, deck_y], fill=(240, 238, 225),
-                outline=INK, width=1)
-    d.line([x + w - 42, deck_y - 8, x + w - 16, deck_y - 8], fill=RED, width=3)
-
-
-SCENES = {1: scene_missile, 2: scene_cop31, 3: scene_shipfire, 4: scene_mine,
-          5: scene_pylon, 6: scene_f1, 7: scene_cricket, 8: scene_talks,
-          9: scene_hospital, 10: scene_border, 11: scene_grounded,
-          12: scene_fire, 13: scene_river}
+SCENES = {1: scene_missile, 2: scene_cop31, 3: scene_shipfire, 4: scene_drones,
+          5: scene_ballot, 6: scene_fire, 7: scene_river, 8: scene_tennis,
+          9: scene_street, 10: scene_talks, 11: scene_cricket, 12: scene_f1,
+          13: scene_tree}
 
 CARDS = [
     (1, "BAHRAIN · IRAN WAR", "Iran strikes US bases in Bahrain",
-     "IRGC missiles and drones hit Patriot radars at Al-Riffa and Awali; two tankers hit near Hormuz. (Reuters)"),
-    (2, "ANTALYA · CLIMATE", "COP31 tables final text for dawn approval",
-     "Presidency puts a last-minute package to ~200 nations; approval session 06:00 GMT, no deal yet. (Reuters, AP)"),
+     "IRGC missiles and drones hit Patriot radars at Al-Riffa and Awali; Bahrain says a civilian site burned. (Reuters)"),
+    (2, "ANTALYA · CLIMATE", "COP31 tables final text for dawn vote",
+     "Ten pages, 94 paragraphs, no mention of fossil fuels; approval session 06:00 GMT, deal in the balance. (Reuters)"),
     (3, "GULF OF FINLAND · UKRAINE WAR", "Russian ship still ablaze in the Baltic",
-     "Sparta II burns on at anchor off Loviisa; 16 crew evacuated, Finland leads the rescue. (Reuters, Yle)"),
-    (4, "N. KORDOFAN · SUDAN WAR", "Landmine kills 22 on a road to El-Obeid",
-     "Civilians on Um Arada road are killed in a blast; monitors blame a paramilitary mine. (Darfur24)"),
-    (5, "TEHRAN · ENERGY", "Iran begins rationing electricity from Sunday",
-     "Cuts of up to two hours a day as gas output lags and war damage bites. (RFE/RL)"),
-    (6, "LAS VEGAS · FORMULA 1", "Verstappen on pole for Vegas night race",
-     "Antonelli fastest but drops five places; the 50-lap race starts 04:00 GMT on Sunday. (Formula 1)"),
-    (7, "WELLINGTON · CRICKET", "Pant's 128 puts India 629/6 on day four",
+     "Sparta II burns on at anchor off Finland; 16 crew evacuated, fire may rage for days. (Reuters, Yle)"),
+    (4, "UKRAINE · DRONE WAR", "186 drones in one night over Ukraine",
+     "Air defences down 161 by 08:00, 56 of 72 jet-powered Shaheds; impacts at 18 sites. (Ukrainian Air Force)"),
+    (5, "HONG KONG · VOTE", "Hong Kong votes for its Election Committee",
+     "856 candidates chase 723 seats; turnout 95.6% by 3pm, polls open 9am-6pm. (China Daily)"),
+    (6, "CIKANDE · DISASTER", "Rescuers hunt 36 missing after factory fire",
+     "Three dead at the Milkita candy plant; 15 survived, four in hospital. (Reuters)"),
+    (7, "BAYELSA · DISASTER", "Boat toll rises to 24 in Nigeria",
+     "Funeral-bound boat capsized Friday; 24 bodies found, 24 survivors rescued. (Reuters, NEMA)"),
+    (8, "TURIN · TENNIS", "Alcaraz meets Zverev for the ATP crown",
+     "World No. 1 Zverev, twice a champion, faces Alcaraz, on a 13-match win streak. (ATP)"),
+    (9, "SINALOA · CARTELS", "11 killed in violence after cartel boss held",
+     "'El Chapo Isidro' flown to Mexico City after a firefight; four soldiers among the dead. (AP)"),
+    (10, "OTTAWA · ALLIES", "Canada seeks clarity on Hegseth memo",
+     "US curbs on military contacts with Ottawa; Pentagon says NORAD untouched. (Washington Post)"),
+    (11, "WELLINGTON · CRICKET", "Pant's 128 puts India 629/6 on day four",
      "Rahul's 136 and Pant's century build a 261-run lead over New Zealand at lunch in the first Test."),
-    (8, "JERUSALEM · POLITICS", "Eisenkot–Likud marathon talks open today",
-     "Yashar invites Netanyahu's party to intensive talks; the mandate ends on 6 December."),
-    (9, "BRASILIA · HEALTH", "Bolsonaro still in intensive care",
-     "Stable and conscious at DF Star hospital after a bowel obstruction; admitted Saturday. (Reuters)"),
-    (10, "NARVA · SECURITY", "Rush to cross before Estonia shuts border",
-     "All five road crossings close on 1 Dec; queues build at Narva after the sabotage row. (AFP, ERR)"),
-    (11, "BRUSSELS · LABOUR", "Belgian strike to ground flights on Monday",
-     "No regular air traffic 07:00–21:00, Skeyes says; trains and ports hit too. (AFP)"),
-    (12, "BASRA · IRAQ", "Power-plant fire kills 4, wounds 35",
-     "Hartha plant blaze in Basra kills four and injures 35 as Iraq's grid strains. (Reuters)"),
-    (13, "DHAKA · RIVERS", "Ganges treaty talks open today",
-     "Bangladesh and India meet on the shared-river treaty as the 1996 pact nears its end."),
+    (12, "NEW YORK · GAMES", "GTA 6 launch day put at $3.79bn",
+     "Record debut estimate for Rockstar's open-world sequel; players hunt its secrets."),
+    (13, "LONDON · TRADITION", "Trafalgar's tree felled in Norway",
+     "The 69-foot spruce, 'Jolly Cheery', cut outside Oslo for 80 years of thanks to London."),
 ]
 
 ALSO = [
-    (14, "POLAND", "Russian missiles reported down in Poland."),
-    (15, "NATO", "Rutte: alliance will defend every inch of Poland."),
-    (16, "ESTONIA", "Tallinn proposes closing border with Russia."),
-    (17, "DENMARK", "Denmark seeks EU curbs on Russian tourists."),
-    (18, "ROME", "Ex-police chief found dead amid mafia-bomb probe."),
-    (19, "LONDON", "Blair: UK rejoin EU only if it innovates."),
-    (20, "COPENHAGEN", "Denmark: Russia plotted to kill a rapper."),
-    (21, "PARIS", "France, Panama, Greece urge fossil fuel back."),
-    (22, "KRYVYI RIH", "Missiles hit Zelenskyy's hometown; 2 dead."),
-    (23, "MADRID", "Alcaraz meets Zverev in the ATP Finals title match."),
-    (24, "RIYADH", "Saudi coalition intercepts 3 Houthi missiles."),
-    (25, "RIYADH", "Houthi strike damaged Riyadh's tallest tower."),
-    (26, "DOHA", "Iran talks to Qatari mediators over a deal."),
-    (27, "BEIRUT", "Aoun demands Israel withdraw from the south."),
-    (28, "JEDDAH", "Air India extends Jeddah suspension to Nov 24."),
-    (29, "MANAMA", "Bahrain: air defences intercepted attacks."),
-    (30, "PATNA", "Modi opens Nitish Setu bridge, Patna–Vaishali."),
+    (14, "MANAMA", "Bahrain demands Iran pay for civilian site hit."),
+    (15, "ANTALYA", "35% electricity by 2035; $120bn target dropped."),
+    (16, "KYIV", "72 jet Shaheds in raid; 56 of them intercepted."),
+    (17, "HELSINKI", "Sparta II fire may burn for days, Finns warn."),
+    (18, "GUASAVE", "Cartel boss flown to Mexico City after firefight."),
+    (19, "HONG KONG", "Turnout 95.6% by 3pm in committee vote."),
+    (20, "JAKARTA", "15 survived factory fire; four in hospital."),
+    (21, "TURIN", "$5.17m for the undefeated ATP champion."),
+    (22, "BEIRUT", "Aoun blames Israel and Iran for threats."),
+    (23, "LONDON", "UK opinion turning against Brexit, polls say."),
+    (24, "CAMBRIDGE", "Lean certifies AI-built Riemann proof."),
+    (25, "WASHINGTON", "Trump: firms must report Congress requests."),
+    (26, "FLORIDA", "St. Johns breaks 73-year flood record."),
+    (27, "NEW DELHI", "JEE Main 2027 registration closes today."),
+    (28, "MANILA", "Quad, ASEAN-India, East Asia summits meet."),
+    (29, "NEW DELHI", "India-Japan expand defence pact."),
+    (30, "PATNA", "Modi opens Nitish Setu bridge."),
     (31, "NEW DELHI", "India passes 1 crore HPV vaccine doses."),
-    (32, "MANIPUR", "Toxic alcohol kills 11, 180+ in hospital."),
-    (33, "GUJARAT", "Car crash kills 7, including a baby."),
-    (34, "NEW DELHI", "India–Japan expand defence pact, joint drills."),
-    (35, "WELLINGTON", "India dominate New Zealand in first Test."),
-    (36, "NEW DELHI", "JEE Main 2027 registration closes today."),
-    (37, "MANILA", "Quad, ASEAN–India, East Asia summits meet."),
-    (38, "DHAKA", "30 Awami League houses torched."),
-    (39, "NEW DELHI", "Jaishankar meets Bulgaria on EU trade deal."),
-    (40, "HYDERABAD", "40 MGD more Godavari water soon."),
-    (41, "SINALOA", "Follow-on cartel violence kills 11."),
-    (42, "FLORIDA", "Record St. Johns floods near Cocoa."),
-    (43, "NEW YORK", "City weighs tighter e-bike battery rules."),
-    (44, "WALL ST", "Tech stock slide deepens on Friday."),
-    (45, "WASHINGTON", "Trump warns US firms on AI centres abroad."),
-    (46, "WASHINGTON", "Democrats retake Congress in midterms."),
-    (47, "TORONTO", "Two Indian-origin men shot dead outside Walmart."),
-    (48, "MOGADISHU", "Al-Shabaab claims hundreds killed in ambush."),
-    (49, "KINSHASA", "DRC Ebola toll passes 5,300."),
-    (50, "KINSHASA", "DRC president signs reform law."),
-    (51, "ACCRA", "Ghana launches \"Heritage Series\" banknotes."),
-    (52, "ABUJA", "Nigeria starts building its own warships."),
-    (53, "MELBOURNE", "70 years since the 1956 Olympics opened."),
-    (54, "AUCKLAND", "Australia beat Wales; France reach final."),
-    (55, "ADDIS ABABA", "Next climate summit set for November 2027."),
-    (56, "WORLD", "Voyager 1 one light-day from Earth."),
-    (57, "WORLD", "International mission reaches Mercury."),
-    (58, "WORLD", "Green sea turtles move to Least Concern."),
-    (59, "WORLD", "Eva Longoria godmother of cruise ship."),
+    (32, "ACCRA", "Ghana launches 'Heritage Series' banknotes."),
+    (33, "MOGADISHU", "Al-Shabaab claims hundreds killed in ambush."),
+    (34, "MELBOURNE", "70 years since the 1956 Olympics opened."),
+    (35, "ABUJA", "Nigeria starts building its own warships."),
 ]
 
 NUMBERS = [
-    ("2", "US bases hit in Bahrain"),
-    ("3", "Houthi missiles downed"),
-    ("11", "killed in Sinaloa aftermath"),
-    ("4", "killed in Basra plant fire"),
+    ("186", "drones launched at Ukraine"),
+    ("161", "drones downed or suppressed"),
+    ("24", "dead in Nigeria boat disaster"),
+    ("36", "missing in Cikande factory fire"),
     ("06:00", "GMT COP31 approval session"),
     ("35%", "electricity share by 2035"),
 ]
 
 REGIONS = [
-    ("EUROPE 14", NAVY),
-    ("MIDDLE EAST 10", RUST),
-    ("ASIA-PACIFIC 12", OCHRE),
-    ("AMERICAS 9", PLUM),
-    ("AFRICA 6", GREEN),
-    ("OCEANIA 3", TEAL),
-    ("WORLD 5", (110, 110, 110)),
+    ("EUROPE 11", NAVY),
+    ("ASIA-PACIFIC 9", OCHRE),
+    ("AMERICAS 6", PLUM),
+    ("AFRICA 4", GREEN),
+    ("MIDDLE EAST 3", RUST),
+    ("OCEANIA 2", TEAL),
 ]
 
-DATE_CHECK = ("Russia's 400-drone barrage — 20 Nov · Missiles land in "
-              "Poland — 19 Nov · Peru quake — 20 Nov local · 'El Chapo "
-              "Isidro' captured — 20 Nov, announced 21 Nov · Gaza aid van "
-              "hit — 21 Nov · Australia's T20 win — 21 Nov · Nvidia "
-              "SEC probe — reported 20 Nov · Chinese bomber off Manila — "
-              "21 Nov")
+QUOTE = ("\u201cWhile no one obtained everything they might have desired, "
+         "everyone can find a place for themselves within this text \u2014 "
+         "that is the very essence of consensus.\u201d")
+QUOTE_BY = "COP31 President Murat Kurum, Antalya, on the final text"
 
-CLOCK = ("BY THE CLOCK — UTC: Sat ~07:00 Sparta II hit by drones · 10:34 "
-         "Russian helicopter in Finnish airspace · Sun 03:00 COP31 "
-         "objections close · 04:00 Vegas lights out · 06:00 COP31 "
-         "approval session")
+DATE_CHECK = ("400-drone barrage \u2014 20 Nov \u00b7 Missiles in Poland \u2014 "
+              "19 Nov \u00b7 Peru quake \u2014 20 Nov \u00b7 \u2018El Chapo "
+              "Isidro\u2019 captured \u2014 20 Nov \u00b7 Gaza aid van \u2014 "
+              "21 Nov \u00b7 EU\u2013Indonesia deal \u2014 21 Nov \u00b7 "
+              "Denmark expels attach\u00e9 \u2014 20 Nov \u00b7 FBI NCIC hack "
+              "\u2014 21 Nov \u00b7 Hartha fire \u2014 21 Nov")
+
+CLOCK = ("BY THE CLOCK \u2014 UTC: Sun ~02:00 COP31 final text tabled \u00b7 "
+         "03:00 objections close \u00b7 06:00 approval session \u00b7 08:00 "
+         "Ukraine: 161 drones downed \u00b7 09:00 Hong Kong polls open \u00b7 "
+         "18:00 ATP final in Turin")
 
 # (card no, lat, lon) -- nudged apart so neighbouring pins stay readable
-PINS = [(1, 26.0, 50.0), (2, 39.0, 28.0), (3, 62.0, 20.0), (4, 13.2, 30.2),
-        (5, 34.0, 56.0), (6, 36.2, -115.1), (7, -41.3, 174.8),
-        (8, 29.0, 33.0), (9, -15.8, -47.9), (10, 57.0, 29.0),
-        (11, 51.0, 4.0), (12, 30.5, 47.8), (13, 19.0, 84.0)]
+PINS = [(1, 26.0, 50.0), (2, 39.0, 28.0), (3, 62.0, 20.0), (4, 50.0, 31.0),
+        (5, 22.3, 114.2), (6, -6.2, 106.2), (7, 4.5, 6.0), (8, 45.1, 7.7),
+        (9, 25.6, -108.5), (10, 45.4, -75.7), (11, -41.3, 174.8),
+        (12, 40.7, -74.0), (13, 51.5, -0.1)]
 
 CONTINENTS = [
     # North America
@@ -544,7 +500,7 @@ def draw_card(d, cx, cy, cw, ch, num, kicker, headline, deck, big):
     SCENES[num](d, cx + 1, cy + 1, cw - 2, ih)
     ty = cy + ih + 5
     kf = font(SANS_B, 10 if big else 9)
-    d.text((cx + 7, ty), f"{num} · {kicker}", font=kf, fill=RED)
+    d.text((cx + 7, ty), f"{num} \u00b7 {kicker}", font=kf, fill=RED)
     ty += 15 if big else 13
     hf = font(SERIF_B, 17 if big else 13)
     hlh = 18 if big else 14
@@ -564,11 +520,11 @@ def main():
 
     # ---- masthead
     d.text((12, 10), "THE WORLD IN ONE DAY", font=font(SANS_B, 13), fill=RED)
-    d.text((W - 12 - d.textlength("SUNDAY'S NEWS · ONE PAGE · 59 STORIES",
+    d.text((W - 12 - d.textlength("SUNDAY'S NEWS \u00b7 ONE PAGE \u00b7 35 STORIES",
                                   font=font(SANS_B, 11)), 11),
-           "SUNDAY'S NEWS · ONE PAGE · 59 STORIES", font=font(SANS_B, 11), fill=INK)
+           "SUNDAY'S NEWS \u00b7 ONE PAGE \u00b7 35 STORIES", font=font(SANS_B, 11), fill=INK)
     d.text((12, 28), "Sunday 22 November 2026", font=font(SERIF_B, 54), fill=INK)
-    d.text((12, 94), "Iran strikes US bases in Bahrain · COP31 tables final text for dawn approval · "
+    d.text((12, 94), "Iran strikes US bases in Bahrain \u00b7 COP31 tables final text for dawn vote \u00b7 "
                       "Russian ship still ablaze in the Baltic",
            font=font(SERIF_I, 15), fill=(60, 57, 48))
     d.rectangle([12, 120, W - 12, 123], fill=RED)
@@ -605,21 +561,31 @@ def main():
     for i, card in enumerate(CARDS[8:13]):
         draw_card(d, 12 + i * (mw + 8), 498, mw, 130, *card, big=False)
 
-    # ---- also list: 46 items, 3 columns x 16 rows
-    d.text((12, 636), "ALSO ON SUNDAY 22 NOVEMBER — 46 MORE STORIES",
+    # ---- also list: 22 items, 3 columns x 8 rows
+    d.text((12, 640), "ALSO ON SUNDAY 22 NOVEMBER \u2014 22 MORE STORIES",
            font=font(SANS_B, 13), fill=RED)
-    d.line([12, 652, W - 12, 652], fill=RULE, width=1)
+    d.line([12, 656, W - 12, 656], fill=RULE, width=1)
     colw = (W - 24 - 2 * 16) // 3
-    af = font(SANS, 10)
+    af = font(SANS, 11)
     for j, (num, city, text) in enumerate(ALSO):
-        col = j // 16
-        row = j % 16
+        col = j // 8
+        row = j % 8
         ax = 12 + col * (colw + 16)
-        ay = 658 + row * 11
-        d.text((ax, ay), f"{num}. {city} — {text}", font=af, fill=INK)
+        ay = 662 + row * 14
+        d.text((ax, ay), f"{num}. {city} \u2014 {text}", font=af, fill=INK)
+
+    # ---- quote strip
+    qy = 782
+    d.rectangle([12, qy, W - 12, qy + 56], outline=RULE, width=1, fill=CARD)
+    d.text((24, qy + 6), "IN THEIR WORDS", font=font(SANS_B, 10), fill=RED)
+    qf = font(SERIF_I, 13)
+    for i, ln in enumerate(wrap(d, QUOTE, qf, W - 48)):
+        d.text((24, qy + 20 + i * 15), ln, font=qf, fill=INK)
+    d.text((W - 24 - d.textlength(QUOTE_BY, font=font(SANS, 10)), qy + 40),
+           QUOTE_BY, font=font(SANS, 10), fill=MUTED)
 
     # ---- bottom row: map + date check
-    d.text((12, 844), "WHERE IT HAPPENED — pins match story numbers",
+    d.text((12, 844), "WHERE IT HAPPENED \u2014 pins match story numbers",
            font=font(SANS_B, 12), fill=RED)
     draw_map(d, 12, 858, 488, 94)
     bx = 524
@@ -632,7 +598,7 @@ def main():
            "so NOT on this page as news:",
            font=font(SANS_B, 10), fill=INK)
     df = font(SANS, 10)
-    ty = 910
+    ty = 908
     for ln in wrap(d, DATE_CHECK, df, W - 12 - bx - 20):
         d.text((bx + 10, ty), ln, font=df, fill=(60, 57, 48))
         ty += 12
@@ -644,7 +610,7 @@ def main():
            "Every story here happened, was first reported, or was live and developing on Sunday 22 November 2026.",
            font=font(SERIF_I, 12), fill=INK)
     d.text((12, 998),
-           "Sources: Reuters, BBC, AP, AFP, The Times of India, India Today, NDTV, The Hindu, Yle, IRNA, Darfur24, RFE/RL, Formula 1, ERR.  Original drawings.",
+           "Sources: Reuters, AP, AFP, China Daily, The Hindu, Yle, Ukrainian Air Force, ATP, Washington Post.  Original drawings.",
            font=font(SANS, 9), fill=MUTED)
 
     img.save(os.path.join(HERE, "entry.png"))
